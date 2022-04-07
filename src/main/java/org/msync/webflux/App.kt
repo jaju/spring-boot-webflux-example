@@ -1,7 +1,8 @@
 package org.msync.webflux
 
+import org.springframework.boot.Banner
+import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
 import org.springframework.web.reactive.config.EnableWebFlux
 
 @EnableWebFlux
@@ -9,5 +10,7 @@ import org.springframework.web.reactive.config.EnableWebFlux
 class App
 
 fun main(args: Array<String>) {
-    runApplication<App>(*args)
+    val app = SpringApplication(App::class.java)
+    app.setBannerMode(Banner.Mode.OFF)
+    app.run(*args)
 }
