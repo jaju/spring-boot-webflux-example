@@ -25,10 +25,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    implementation("io.projectreactor.tools:blockhound:1.0.6.RELEASE")
+    implementation("io.projectreactor:reactor-tools")
+
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.projectreactor:reactor-test:3.4.16")
+    testImplementation("io.projectreactor:reactor-test")
 
     annotationProcessor("org.springframework.book:spring-boot-configuration-processor")
+
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
