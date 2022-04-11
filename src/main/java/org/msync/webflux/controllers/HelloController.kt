@@ -10,9 +10,11 @@ import reactor.core.publisher.Mono
 @RequestMapping("/hello")
 class HelloController {
 
+    // Expression style
     @GetMapping(*["", "/"], consumes = [MediaType.TEXT_PLAIN_VALUE])
     fun sayHelloText(): Mono<String> = Mono.just("Hello")
 
+    // Method body
     @GetMapping(*["", "/"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun sayHelloJson(): Mono<Map<String,String>> {
         return Mono.just(mapOf("greeting" to "Hello"))
