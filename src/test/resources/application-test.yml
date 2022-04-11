@@ -1,0 +1,4 @@
+spring:
+
+  r2dbc:
+    url: r2dbc:h2:mem://./demo;DB_CLOSE_DELAY=-1 # DB_CLOSE_DELAY=-1 is important, else the DB gets cleared on connection close

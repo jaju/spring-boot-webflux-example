@@ -1,0 +1,9 @@
+Steps
+
+- Download [[https://edu.postgrespro.com/demo-small-en.zip]]
+- Unzip it
+  - You should see a file named similar to /demo-small-en-20170815.sql/
+- Load it into postgres (DB name hardcoded to *demo* - so we stick with it)
+#+begin_src bash
+psql postgres < demo-small-en-20170815.sql  
+#+end_src

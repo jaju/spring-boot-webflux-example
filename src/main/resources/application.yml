@@ -1,0 +1,3 @@
+spring:
+  r2dbc:
+    url: ${WEBFLUX_DB_URL:r2dbc:postgresql://${USER}@localhost:5432/demo}
