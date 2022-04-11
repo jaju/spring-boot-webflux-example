@@ -2,21 +2,23 @@
 <configuration>
 
     <include resource="console-appender.xml"/>
-    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
-    <springProfile name="dev">
+    <springProfile name="default">
         <logger name="org.msync.webflux" level="debug" additivity="false">
             <appender-ref ref="Console"/>
         </logger>
     </springProfile>
 
-    <springProfile name="default">
-        <logger name="org.msync.webflux" level="info" additivity="false">
-            <appender-ref ref="Console"/>
-        </logger>
-    </springProfile>
-
     <logger name="org.springframework" level="warn" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="org.springframework.boot.web" level="info" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+    <logger name="org.springframework.data" level="info" additivity="false">
         <appender-ref ref="Console"/>
     </logger>
 
