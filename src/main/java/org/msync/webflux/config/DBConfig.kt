@@ -1,5 +1,7 @@
 package org.msync.webflux.config
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.r2dbc.postgresql.codec.Json
 import io.r2dbc.spi.ConnectionFactories
 import io.r2dbc.spi.ConnectionFactory
@@ -19,22 +21,24 @@ import java.util.logging.Logger
 
 
 @ReadingConverter
-class JsonToMapConverter: Converter<Json, Map<String, Any>> {
+class JsonToMapConverter(val mapper: ObjectMapper): Converter<Json, Map<String, Any>> {
     override fun convert(source: Json): Map<String, Any>? {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        return mapper.readValue(source.asString(), object: TypeReference<Map<String, Any>>() {})
     }
 }
 
 @WritingConverter
-class MapToJsonConverter: Converter<Map<String, Any>, Json> {
+class MapToJsonConverter(val mapper: ObjectMapper): Converter<Map<String, Any>, Json> {
     override fun convert(source: Map<String, Any>): Json? {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        return Json.of(mapper.writeValueAsString(source))
     }
 }
 
 @Configuration
-@EnableR2dbcRepositories
-class DBConfig(val r2dbcProps: R2dbcProperties): AbstractR2dbcConfiguration() {
+@EnableR2dbcRepositories("org.msync.webflux")
+class DBConfig(val r2dbcProps: R2dbcProperties, val mapper: ObjectMapper): AbstractR2dbcConfiguration() {
 
     override fun connectionFactory(): ConnectionFactory {
         val options = ConnectionFactoryOptions.parse(r2dbcProps.url)
@@ -58,16 +62,16 @@ class DBConfig(val r2dbcProps: R2dbcProperties): AbstractR2dbcConfiguration() {
         //  )
     }
 
-    override fun getCustomConverters(): MutableList<Any> {
+    override fun getCustomConverters(): List<Any> {
         val l = PostgresDialect.INSTANCE.converters
-        l.addAll(listOf(JsonToMapConverter(), MapToJsonConverter()))
-        return l.toMutableList()
+        l.addAll(listOf(JsonToMapConverter(mapper), MapToJsonConverter(mapper)))
+        return l.toList()
     }
 
     @Bean
     override fun r2dbcCustomConversions() : R2dbcCustomConversions {
         println("*********************************************************************************************")
-        val customConverters = listOf(JsonToMapConverter(), MapToJsonConverter())
+        val customConverters = listOf(JsonToMapConverter(mapper), MapToJsonConverter(mapper))
         return R2dbcCustomConversions(storeConversions, customConverters)
     }
 

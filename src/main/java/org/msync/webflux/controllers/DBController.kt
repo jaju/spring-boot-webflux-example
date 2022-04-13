@@ -11,8 +11,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import io.r2dbc.postgresql.codec.Json
 import io.r2dbc.spi.ConnectionFactory
+import org.springframework.data.annotation.Id
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.data.r2dbc.core.insert
+import org.springframework.data.r2dbc.core.update
 import org.springframework.data.r2dbc.query.Criteria.where
+import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query.query
@@ -42,21 +46,25 @@ interface AircraftRepository : ReactiveCrudRepository<Aircraft, String>
 @Table("aircrafts_data")
 data class AircraftRaw(
     val aircraftCode: String,
-    val model: Json,
+    val model: Map<String, Any>,
     val range: Int
 )
 
 data class AircraftRawHTTP(
-    val aircraftCode: String,
+    @javax.persistence.Id @Id @Column("aircraft_code") val aircraftCode: String,
     val model: Map<String, Any>,
     val range: Int
 )
+
+@Repository
+interface AircraftRawReopository: ReactiveCrudRepository<AircraftRaw, String>
 
 @RestController
 @EnableWebFlux
 @RequestMapping("/db")
 class DBController(
     val aircraftRepository: AircraftRepository,
+    val aircraftRawReopository: AircraftRawReopository,
     val connectionFactory: ConnectionFactory
 ) {
 
@@ -70,14 +78,29 @@ class DBController(
     }
 
     @PostMapping("/aircrafts", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun saveAircraft(@RequestBody aircraft: AircraftRawHTTP): ResponseEntity<Mono<Int>>? {
+    fun saveAircraft(@RequestBody aircraft: AircraftRaw): ResponseEntity<Mono<AircraftRaw>?> {
         println(aircraft.model.javaClass)
         return ResponseEntity.ok()
-            .body(R2dbcEntityTemplate(connectionFactory)
-                .update(AircraftRaw::class.java)
-                .inTable("aircrafts_data")
-                .matching(query(Criteria.where("aircraftCode").isEqual(aircraft.aircraftCode)))
-                .apply(Update.update("model", aircraft.model)))
+            .body(aircraftRawReopository.save(aircraft))
+//            .body(R2dbcEntityTemplate(connectionFactory)
+//                .update(AircraftRaw::class.java)
+//                .inTable("aircrafts_data")
+//                .matching(query(Criteria.where("aircraftCode").isEqual(aircraft.aircraftCode)))
+//                .apply(Update.update("model", aircraft.model)))
+    }
+
+    @PostMapping("/aircrafts2", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun saveAircraft2(@RequestBody aircraft: AircraftRaw): ResponseEntity<Mono<AircraftRaw>?> {
+        val t = R2dbcEntityTemplate(connectionFactory)
+//        t.insert<AircraftRaw>()
+//            .using(aircraft)
+        return ResponseEntity.ok()
+            .body(t.update(aircraft))
+//            .body(R2dbcEntityTemplate(connectionFactory)
+//                .update(AircraftRaw::class.java)
+//                .inTable("aircrafts_data")
+//                .matching(query(Criteria.where("aircraftCode").isEqual(aircraft.aircraftCode)))
+//                .apply(Update.update("model", aircraft.model)))
     }
 
 }
