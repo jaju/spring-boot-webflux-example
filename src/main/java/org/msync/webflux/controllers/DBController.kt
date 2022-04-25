@@ -31,7 +31,7 @@ data class AircraftData(
 )
 
 @Repository
-interface AircraftDataRepository: ReactiveCrudRepository<AircraftData, String>
+interface AircraftDataRepository : ReactiveCrudRepository<AircraftData, String>
 
 @RestController
 @EnableWebFlux
@@ -52,7 +52,6 @@ class DBController(
 
     @PostMapping("/aircrafts", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun saveAircraft(@RequestBody aircraft: AircraftData): ResponseEntity<Mono<AircraftData>?> {
-        println(aircraft.model.javaClass)
         return ResponseEntity.ok()
             .body(aircraftRawReopository.save(aircraft))
 //            .body(R2dbcEntityTemplate(connectionFactory)

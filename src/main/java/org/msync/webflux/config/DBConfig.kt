@@ -23,7 +23,6 @@ import java.util.logging.Logger
 @ReadingConverter
 class JsonToMapConverter(val mapper: ObjectMapper): Converter<Json, Map<String, Any>> {
     override fun convert(source: Json): Map<String, Any>? {
-//        TODO("Not yet implemented")
         return mapper.readValue(source.asString(), object: TypeReference<Map<String, Any>>() {})
     }
 }
@@ -31,7 +30,6 @@ class JsonToMapConverter(val mapper: ObjectMapper): Converter<Json, Map<String, 
 @WritingConverter
 class MapToJsonConverter(val mapper: ObjectMapper): Converter<Map<String, Any>, Json> {
     override fun convert(source: Map<String, Any>): Json? {
-//        TODO("Not yet implemented")
         return Json.of(mapper.writeValueAsString(source))
     }
 }
@@ -70,8 +68,6 @@ class DBConfig(val r2dbcProps: R2dbcProperties, val mapper: ObjectMapper): Abstr
 
     @Bean
     override fun r2dbcCustomConversions() : R2dbcCustomConversions {
-        println("*********************************************************************************************")
-        val customConverters = listOf(JsonToMapConverter(mapper), MapToJsonConverter(mapper))
         return R2dbcCustomConversions(storeConversions, customConverters)
     }
 
